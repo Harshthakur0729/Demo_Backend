@@ -1,0 +1,25 @@
+# Compiled Target Folder (Docker container ke andar fresh clean package banega)
+target/
+
+# Version Control
+.git
+.gitignore
+
+# Environment & Config Secrets
+.env
+application-local.properties
+
+# IDE Configurations
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.vscode/
+
+# Build Logs & Temporary Files
+*.log
+.mvn/wrapper/maven-wrapper.jar
+Dockerfile
+docker-compose.yml
+.dockerignore
