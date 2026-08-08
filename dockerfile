@@ -11,7 +11,7 @@ COPY mvnw .
 RUN chmod +x mvnw
 RUN ./mvnw dependency:go-offline -B
 
-# Copy source code and package application (Skipping test compilation & execution)
+# Copy source code and package application (Skipping tests)
 COPY src ./src
 RUN ./mvnw clean package -Dmaven.test.skip=true
 
@@ -25,8 +25,8 @@ LABEL maintainer="harshthakur0729@gmail.com"
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring
 
-# Copy the built jar file
-COPY --from=builder /build/target/*[!plain].jar app.jar
+# Copy the single built .jar file directly to app.jar
+COPY --from=builder /build/target/*.jar app.jar
 
 EXPOSE 8080
 
