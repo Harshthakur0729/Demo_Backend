@@ -20,7 +20,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    // Docker Compose se aane wale Environment variable ko read karega
+    // Reads allowed.cors.origin from application.properties
     @Value("${allowed.cors.origin:http://localhost:5173}")
     private String allowedCorsOrigin;
 
@@ -31,48 +31,32 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // 1. Enable CORS
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-
-                // 2. Disable CSRF for stateless REST APIs
                 .csrf(csrf -> csrf.disable())
-
-                // 3. Stateless Session Management (JWT based)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-                // 4. API Authorization Rules
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
-
-                // 5. Add JWT Filter
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // 🌐 Dynamic CORS Configuration Source
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Local Development Ports + Docker Port + Environment Variable
-        configuration.setAllowedOrigins(List.of(
+        configuration.setAllowedOriginPatterns(List.of(
                 "http://localhost:3000",
-                "http://localhost:5173", // Local Vite
-                "http://localhost:4000", // Docker Frontend Port
-                "http://localhost:4200",
-                allowedCorsOrigin        // Docker Compose dynamic origin
+                "http://localhost:5173",
+                "http://localhost:4000",
+                "https://*.vercel.app",
+                allowedCorsOrigin
         ));
 
-        // Allowed HTTP Methods
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-
-        // Allowed Headers
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
-
-        // Allow Cookies / Authorization Headers
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "X-Requested-With"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
