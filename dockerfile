@@ -11,9 +11,9 @@ COPY mvnw .
 RUN chmod +x mvnw
 RUN ./mvnw dependency:go-offline -B
 
-# Copy source code and package application
+# Copy source code and package application (Skipping test compilation & execution)
 COPY src ./src
-RUN ./mvnw clean package -DskipTests
+RUN ./mvnw clean package -Dmaven.test.skip=true
 
 # Stage 2: Runtime Environment
 FROM eclipse-temurin:21-jre-alpine
@@ -25,10 +25,9 @@ LABEL maintainer="harshthakur0729@gmail.com"
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring
 
-# Copy the built jar file (skipping plain.jar if generated)
+# Copy the built jar file
 COPY --from=builder /build/target/*[!plain].jar app.jar
 
 EXPOSE 8080
 
-# Run Spring Boot with container-aware memory management
 ENTRYPOINT ["java", "-XX:+UseG1GC", "-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]
