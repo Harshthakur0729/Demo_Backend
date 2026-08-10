@@ -1,6 +1,5 @@
 package com.example.auth_demo.config;
 
-
 import com.example.auth_demo.security.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -11,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -31,8 +31,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = null;
 
-        // Extract token from HttpOnly cookie
-        if (request.getCookies() != null) {
+        // 1. Try extracting token from Authorization Header (Bearer Token)
+        String authHeader = request.getHeader("Authorization");
+        if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+        }
+
+        // 2. Fallback: Extract token from HttpOnly cookie if header is not present
+        if (token == null && request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if ("jwtToken".equals(cookie.getName())) {
                     token = cookie.getValue();
@@ -41,6 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
+        // Validate and authenticate
         if (token != null) {
             try {
                 String username = jwtUtils.getUsernameFromToken(token);
