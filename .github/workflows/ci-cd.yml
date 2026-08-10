@@ -39,5 +39,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/backend_image:latest
-            ${{ secrets.DOCKER_USERNAME }}/backend_image:${{ github.sha }}
+            ${{ secrets.DOCKER_USERNAME }}/backend_images:latest
+            ${{ secrets.DOCKER_USERNAME }}/backend_images:${{ github.sha }}
