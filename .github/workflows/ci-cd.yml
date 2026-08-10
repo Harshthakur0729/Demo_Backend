@@ -2,7 +2,7 @@ name: Build and Push Docker Image
 
 on:
   push:
-    branches: [ "main", "master", "oct" ] # Jis branch par commit karne par push karna hai
+    branches: ["main", "master", "oct"] # Jis branch par commit karne par push karna hai
 
 jobs:
   build-and-push:
@@ -13,12 +13,12 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 2. Java / JDK 17 Setup
-      - name: Set up JDK 17
+      # 2. Java / JDK 21 Setup
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          java-version: "21" # <--- Change this from '17' to '21'
+          distribution: "temurin"
           cache: maven
 
       # 3. Spring Boot Application Build (Generate JAR)
