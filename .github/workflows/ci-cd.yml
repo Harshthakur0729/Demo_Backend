@@ -2,9 +2,9 @@ name: Build and Push Docker Image
 
 on:
   push:
-    branches: ["oct", "main", "dev"] # Yahan 'dev' add kar diya gaya hai
+    branches: ["oct"]
   pull_request:
-    branches: ["oct", "main", "dev"]
+    branches: ["oct"]
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
