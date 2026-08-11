@@ -30,10 +30,10 @@ pipeline {
                         // Login to Docker Hub
                         bat '"C:\\Users\\yasht\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" login -u %DOCKER_USER% -p %DOCKER_PASS%'
                         
-                        // Step A: Image Build
+                        // Build Image Locally
                         bat '"C:\\Users\\yasht\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" build -t %DOCKER_IMAGE%:latest .'
                         
-                        // Step B: Push to Docker Hub
+                        // Push Image to Docker Hub
                         bat '"C:\\Users\\yasht\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" push %DOCKER_IMAGE%:latest'
                     }
                 }
@@ -47,6 +47,13 @@ pipeline {
                     bat 'curl -X POST "%RENDER_URL%"'
                 }
             }
+        }
+    }
+
+    // Cleanup local images after every build run
+    post {
+        always {
+            bat '"C:\\Users\\yasht\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" image prune -f'
         }
     }
 }
