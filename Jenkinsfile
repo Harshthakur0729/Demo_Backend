@@ -26,9 +26,15 @@ pipeline {
         stage('Build & Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_HUB_CRED}") {
-                        def customImage = docker.build("${DOCKER_IMAGE}:latest")
-                        customImage.push('latest')
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
+                        // Docker Login
+                        bat 'echo %DOCKER_PASS% | "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" login -u %DOCKER_USER% --password-stdin'
+                        
+                        // Build Image
+                        bat '"C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" build -t %DOCKER_IMAGE%:latest .'
+                        
+                        // Push Image
+                        bat '"C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" push %DOCKER_IMAGE%:latest'
                     }
                 }
             }
