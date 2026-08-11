@@ -4,8 +4,8 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'harshthakur0729/backend_images'
         DOCKER_HUB_CRED = 'dockerhub-credentials'
-        // Docker Engine ko TCP port 2375 se connect karne ke liye
-        DOCKER_HOST = 'tcp://localhost:2375'
+        // localhost ki jagah direct 127.0.0.1 IPv4 set kiya gaya hai
+        DOCKER_HOST = 'tcp://127.0.0.1:2375'
     }
 
     stages {
