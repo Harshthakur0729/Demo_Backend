@@ -17,7 +17,8 @@ pipeline {
         // 2. Spring Boot Project Build (JAR Generation)
         stage('Build Spring Boot JAR') {
             steps {
-                sh 'mvn clean package -DskipTests'
+                // Windows par 'sh' ki jagah 'bat' use hota hai
+                bat 'mvn clean package -DskipTests'
             }
         }
 
@@ -37,7 +38,8 @@ pipeline {
         stage('Deploy to Render') {
             steps {
                 withCredentials([string(credentialsId: 'RENDER_DEPLOY_HOOK', variable: 'RENDER_URL')]) {
-                    sh 'curl -X POST $RENDER_URL'
+                    // Windows Batch variable syntax %RENDER_URL% use kiya gaya hai
+                    bat 'curl -X POST %RENDER_URL%'
                 }
             }
         }
