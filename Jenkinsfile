@@ -4,6 +4,8 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'harshthakur0729/backend_images'
         DOCKER_HUB_CRED = 'dockerhub-credentials'
+        // Docker Engine ko TCP port 2375 se connect karne ke liye
+        DOCKER_HOST = 'tcp://localhost:2375'
     }
 
     stages {
@@ -26,7 +28,7 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
-                        // Direct -p use karne se exact token pass hoga bina kisi extra space/newline ke
+                        // Login
                         bat '"C:\\Users\\yasht\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" login -u %DOCKER_USER% -p %DOCKER_PASS%'
                         
                         // Build Image
