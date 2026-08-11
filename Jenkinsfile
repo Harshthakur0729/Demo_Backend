@@ -11,6 +11,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 git branch: 'oct', url: 'https://github.com/Harshthakur0729/Demo_Backend.git'
+                git branch: 'dev', url: 'https://github.com/Harshthakur0729/Demo_Backend.git'
             }
         }
 
