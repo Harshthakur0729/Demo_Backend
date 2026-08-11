@@ -17,7 +17,6 @@ pipeline {
         // 2. Spring Boot Project Build (JAR Generation)
         stage('Build Spring Boot JAR') {
             steps {
-                // Windows par 'sh' ki jagah 'bat' use hota hai
                 bat 'mvn clean package -DskipTests'
             }
         }
@@ -27,14 +26,14 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
-                        // Docker Login
-                        bat 'echo %DOCKER_PASS% | "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" login -u %DOCKER_USER% --password-stdin'
+                        // Docker Login (Path Updated)
+                        bat 'echo %DOCKER_PASS% | "C:\\Users\\yasht\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" login -u %DOCKER_USER% --password-stdin'
                         
-                        // Build Image
-                        bat '"C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" build -t %DOCKER_IMAGE%:latest .'
+                        // Build Image (Path Updated)
+                        bat '"C:\\Users\\yasht\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" build -t %DOCKER_IMAGE%:latest .'
                         
-                        // Push Image
-                        bat '"C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe" push %DOCKER_IMAGE%:latest'
+                        // Push Image (Path Updated)
+                        bat '"C:\\Users\\yasht\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" push %DOCKER_IMAGE%:latest'
                     }
                 }
             }
@@ -44,7 +43,6 @@ pipeline {
         stage('Deploy to Render') {
             steps {
                 withCredentials([string(credentialsId: 'RENDER_DEPLOY_HOOK', variable: 'RENDER_URL')]) {
-                    // Windows Batch variable syntax %RENDER_URL% use kiya gaya hai
                     bat 'curl -X POST %RENDER_URL%'
                 }
             }
