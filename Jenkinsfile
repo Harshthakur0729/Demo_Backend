@@ -8,35 +8,40 @@ pipeline {
     }
 
     stages {
+        // 1. Checkout Code
         stage('Checkout Code') {
             steps {
-                git branch: 'oct', url: 'https://github.com/Harshthakur0729/Demo_Backend.git'
-                git branch: 'dev', url: 'https://github.com/Harshthakur0729/Demo_Backend.git'
+                checkout scm
             }
         }
 
+        // 2. Build Spring Boot JAR
         stage('Build Spring Boot JAR') {
             steps {
                 bat 'mvn clean package -DskipTests'
             }
         }
 
+        // 3. Direct Build & Push via Buildx
         stage('Build & Push Docker Image') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
+                        // Login to Docker Hub
                         bat '"C:\\Users\\yasht\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" login -u %DOCKER_USER% -p %DOCKER_PASS%'
-                        bat '"C:\\Users\\yasht\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" build -t %DOCKER_IMAGE%:latest .'
-                        bat '"C:\\Users\\yasht\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" push %DOCKER_IMAGE%:latest'
+                        
+                        // Single step: Direct build and push to Docker Hub
+                        bat '"C:\\Users\\yasht\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" buildx build --push -t %DOCKER_IMAGE%:latest .'
                     }
                 }
             }
         }
 
+        // 4. Trigger Auto-Deployment on Render
         stage('Deploy to Render') {
             steps {
                 withCredentials([string(credentialsId: 'RENDER_DEPLOY_HOOK', variable: 'RENDER_URL')]) {
-                    bat 'curl -X POST %RENDER_URL%'
+                    bat 'curl -X POST "%RENDER_URL%"'
                 }
             }
         }
