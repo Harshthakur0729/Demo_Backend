@@ -22,7 +22,7 @@ pipeline {
             }
         }
 
-        // 3. Direct Build & Push via Buildx
+        // 3. Build & Push Docker Image
         stage('Build & Push Docker Image') {
             steps {
                 script {
@@ -30,8 +30,11 @@ pipeline {
                         // Login to Docker Hub
                         bat '"C:\\Users\\yasht\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" login -u %DOCKER_USER% -p %DOCKER_PASS%'
                         
-                        // Single step: Direct build and push to Docker Hub
-                        bat '"C:\\Users\\yasht\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" buildx build --push -t %DOCKER_IMAGE%:latest .'
+                        // Step A: Image Build
+                        bat '"C:\\Users\\yasht\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" build -t %DOCKER_IMAGE%:latest .'
+                        
+                        // Step B: Push to Docker Hub
+                        bat '"C:\\Users\\yasht\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe" push %DOCKER_IMAGE%:latest'
                     }
                 }
             }
