@@ -15,7 +15,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # SonarQube deep scan ke liye zaroori hai
+          fetch-depth: 0
 
       # 2. Setup JDK 21
       - name: Set up JDK 21
@@ -33,7 +33,6 @@ jobs:
       - name: SonarQube Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: https://sonarcloud.io
         run: |
           mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.organization=harshthakur0729 \
@@ -41,7 +40,6 @@ jobs:
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
-            
       # 5. Log in to Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
